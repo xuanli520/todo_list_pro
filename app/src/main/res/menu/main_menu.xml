@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="搜索"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="排序"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/action_sort_date"
+                android:title="按日期排序" />
+            <item
+                android:id="@+id/action_sort_priority"
+                android:title="按优先级排序" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@android:drawable/ic_menu_more"
+        android:title="筛选"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/action_filter_high"
+                android:title="高优先级" />
+            <item
+                android:id="@+id/action_filter_medium"
+                android:title="中优先级" />
+            <item
+                android:id="@+id/action_filter_low"
+                android:title="低优先级" />
+            <item
+                android:id="@+id/action_filter_work"
+                android:title="工作" />
+            <item
+                android:id="@+id/action_filter_personal"
+                android:title="个人" />
+            <item
+                android:id="@+id/action_filter_study"
+                android:title="学习" />
+            <item
+                android:id="@+id/action_filter_shopping"
+                android:title="购物" />
+            <item
+                android:id="@+id/action_clear_filters"
+                android:title="清除筛选" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="设置"
+        app:showAsAction="never" />
+</menu>

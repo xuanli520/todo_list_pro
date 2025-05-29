@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.siyuan.todo_list"
+    namespace = "com.siyuan.todolist"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.siyuan.todo_list"
+        applicationId = "com.siyuan.todolist"
         minSdk = 31
         targetSdk = 35
         versionCode = 1

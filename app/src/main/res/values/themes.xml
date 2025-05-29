@@ -1,9 +1,49 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Todo_list" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 基础应用主题 -->
+    <style name="Theme.Todo_list" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- 主要品牌色 -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
+        <!-- 次要品牌色 -->
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent_dark</item>
+        <item name="colorOnSecondary">@android:color/black</item>
+
+        <!-- 状态栏颜色 -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- 组件默认样式 -->
+        <item name="materialCardViewStyle">@style/Widget.Todo_list.CardView</item>
+        <item name="chipStyle">@style/Widget.Todo_list.Chip</item>
     </style>
 
-    <style name="Theme.Todo_list" parent="Base.Theme.Todo_list" />
+    <!-- 卡片视图样式 -->
+    <style name="Widget.Todo_list.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardElevation">4dp</item>
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <!-- Chip样式 -->
+    <style name="Widget.Todo_list.Chip" parent="Widget.MaterialComponents.Chip.Action">
+        <item name="chipBackgroundColor">@color/chip_background</item>
+        <item name="android:textColor">@color/on_chip_background</item>
+    </style>
+
+    <!-- 折叠工具栏展开时的文本样式 -->
+<style name="TextAppearance.App.CollapsingToolbar.Expanded" parent="TextAppearance.MaterialComponents.Headline5">
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textSize">24sp</item>
+    <item name="android:textStyle">bold</item>
+</style>
+
+<!-- 折叠工具栏折叠时的文本样式 -->
+<style name="TextAppearance.App.CollapsingToolbar.Collapsed" parent="TextAppearance.MaterialComponents.Headline6">
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textSize">18sp</item>
+</style>
+
 </resources>
