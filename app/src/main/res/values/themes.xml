@@ -33,17 +33,20 @@
         <item name="android:textColor">@color/on_chip_background</item>
     </style>
 
-    <!-- 折叠工具栏展开时的文本样式 -->
-<style name="TextAppearance.App.CollapsingToolbar.Expanded" parent="TextAppearance.MaterialComponents.Headline5">
-    <item name="android:textColor">@color/white</item>
-    <item name="android:textSize">24sp</item>
-    <item name="android:textStyle">bold</item>
-</style>
+    <style name="Theme.YourApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- 其他样式属性 -->
+        <item name="tabStyle">@style/Widget.App.TabLayout</item>
+    </style>
 
-<!-- 折叠工具栏折叠时的文本样式 -->
-<style name="TextAppearance.App.CollapsingToolbar.Collapsed" parent="TextAppearance.MaterialComponents.Headline6">
-    <item name="android:textColor">@color/white</item>
-    <item name="android:textSize">18sp</item>
-</style>
+    <style name="Widget.App.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabPaddingStart">8dp</item>
+        <item name="tabPaddingEnd">8dp</item>
+        <item name="tabPaddingTop">6dp</item>
+        <item name="tabPaddingBottom">6dp</item>
+        <item name="tabInlineLabel">true</item>
+        <item name="tabMinWidth">0dp</item>
+        <item name="tabIconTint">@color/tab_icon_color_selector</item>
+    </style>
+
 
 </resources>

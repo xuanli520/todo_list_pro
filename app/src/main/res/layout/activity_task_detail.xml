@@ -4,74 +4,109 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/soft_background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:background="@android:color/transparent"
+        android:fitsSystemWindows="true"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="240dp"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/primary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="任务详情"
-            app:expandedTitleMarginStart="16dp"
-            app:expandedTitleMarginBottom="16dp"
-            app:expandedTitleTextAppearance="@style/TextAppearance.App.CollapsingToolbar.Expanded"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.App.CollapsingToolbar.Collapsed">
+            app:contentScrim="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:scrimAnimationDuration="300"
+            app:title=""
+            app:titleEnabled="false">
 
-            <ImageView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/task_detail_header"
-                android:scaleType="centerCrop"
-                android:fitsSystemWindows="true"
+                android:layout_height="220dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="12dp"
                 app:layout_collapseMode="parallax"
-                android:contentDescription="背景图" />
+                app:layout_collapseParallaxMultiplier="0.7">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/gradient_scrim"
-                app:layout_collapseMode="parallax" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:navigationIcon="@drawable/ic_back"
-                app:layout_collapseMode="pin"
-                app:menu="@menu/task_detail_menu" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/task_header_bg"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="背景图" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/header_gradient_overlay" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="任务详情"
+                        android:textSize="30sp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="28dp"
+                        android:layout_marginBottom="28dp"
+                        android:elevation="4dp" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/buttonBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|start"
+                        android:layout_margin="16dp"
+                        app:fabSize="mini"
+                        app:backgroundTint="#80FFFFFF"
+                        app:tint="@color/white"
+                        android:contentDescription="返回"
+                        app:srcCompat="@drawable/ic_back_circle" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbarThumbVertical="@android:color/transparent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                android:layout_marginBottom="16dp">
+                app:cardCornerRadius="28dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="28dp"
+                    android:background="@drawable/card_gradient_background">
 
                     <TextView
                         android:id="@+id/textViewTaskTitle"
@@ -79,144 +114,267 @@
                         android:layout_height="wrap_content"
                         android:text="完成Android TodoList UI设计"
                         android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/on_background" />
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/text_primary" />
 
-                    <LinearLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp">
+                        android:layout_marginTop="20dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp"
+                        android:background="@drawable/nested_card_background">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipCategory"
-                            android:layout_width="wrap_content"
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="工作"
-                            app:chipBackgroundColor="@color/primary_light" />
+                            android:scrollbars="none"
+                            android:paddingVertical="14dp"
+                            android:paddingHorizontal="18dp"
+                            android:overScrollMode="never">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipPriority"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="高优先级"
-                            app:chipBackgroundColor="@color/task_priority_high"
-                            app:chipIconTint="@color/on_primary"
-                            android:textColor="@color/on_primary" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipDueDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="今天截止"
-                            app:chipIcon="@drawable/ic_calendar"
-                            app:chipIconTint="@color/primary" />
-                    </LinearLayout>
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipCategory"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="工作"
+                                    android:textColor="@color/accent_dark"
+                                    app:chipBackgroundColor="@color/accent_light"
+                                    app:chipStrokeWidth="0dp"
+                                    app:chipStartPadding="14dp"
+                                    app:chipEndPadding="14dp"
+                                    app:chipCornerRadius="14dp" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipPriority"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:text="高优先级"
+                                    app:chipBackgroundColor="@color/priority_high_bg"
+                                    app:chipIcon="@drawable/ic_priority_high"
+                                    app:chipIconTint="@color/priority_high_text"
+                                    android:textColor="@color/priority_high_text"
+                                    app:chipCornerRadius="14dp" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipDueDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:text="今天截止"
+                                    app:chipIcon="@drawable/ic_calendar_soft"
+                                    app:chipIconTint="@color/text_secondary"
+                                    android:textColor="@color/text_secondary"
+                                    app:chipBackgroundColor="@color/chip_background"
+                                    app:chipCornerRadius="14dp" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_height="1.5dp"
+                        android:background="@drawable/divider_gradient"
+                        android:layout_marginTop="28dp"
+                        android:layout_marginBottom="28dp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="任务描述"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/on_background" />
+                        android:textSize="20sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="@color/text_primary" />
 
-                    <TextView
-                        android:id="@+id/textViewTaskDescription"
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="设计一个美观实用的TodoList应用界面，包括主界面、任务列表、任务详情页和添加任务页面。遵循Material Design 3设计规范，使用协调的配色方案和现代化UI组件。"
-                        android:textSize="16sp"
-                        android:lineSpacingExtra="4dp" />
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:id="@+id/textViewTaskDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="20dp"
+                            android:text="设计一个美观实用的TodoList应用界面，包括主界面、任务列表、任务详情页和添加任务页面。遵循Material Design 3设计规范，使用协调的配色方案和现代化UI组件。"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:lineSpacingExtra="8dp"
+                            android:textColor="@color/text_secondary" />
+                    </com.google.android.material.card.MaterialCardView>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_height="1.5dp"
+                        android:background="@drawable/divider_gradient"
+                        android:layout_marginTop="28dp"
+                        android:layout_marginBottom="28dp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="20dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="创建时间"
+                                    android:textSize="15sp"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:textColor="@color/text_secondary" />
+
+                                <TextView
+                                    android:id="@+id/textViewCreatedDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="2023年6月10日"
+                                    android:textSize="17sp"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:textColor="@color/text_primary"
+                                    android:layout_marginTop="6dp" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1.5dp"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/vertical_divider" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="20dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="提醒时间"
+                                    android:textSize="15sp"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:textColor="@color/text_secondary" />
+
+                                <TextView
+                                    android:id="@+id/textViewReminderTime"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="2023年6月15日 14:30"
+                                    android:textSize="17sp"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:textColor="@color/text_primary"
+                                    android:layout_marginTop="6dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonComplete"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:text="标记为已完成"
+                        android:textSize="17sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:layout_marginBottom="12dp"
+                        android:backgroundTint="@color/accent"
+                        app:cornerRadius="20dp"
+                        app:elevation="6dp"
+                        app:icon="@drawable/ic_check_circle"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        android:stateListAnimator="@animator/button_state_list_anim" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
-                        <LinearLayout
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonEdit"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="64dp"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginEnd="6dp"
+                            android:text="编辑"
+                            android:textSize="17sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="@color/accent"
+                            app:strokeColor="@color/accent"
+                            app:strokeWidth="2dp"
+                            app:icon="@drawable/ic_edit"
+                            app:iconTint="@color/accent"
+                            app:iconGravity="textStart"
+                            app:iconPadding="8dp"
+                            android:backgroundTint="@android:color/white"
+                            app:cornerRadius="20dp"
+                            app:rippleColor="@color/accent_light"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="创建时间"
-                                android:textSize="14sp"
-                                android:textColor="#757575" />
 
-                            <TextView
-                                android:id="@+id/textViewCreatedDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="2023年6月10日"
-                                android:textSize="16sp"
-                                android:textColor="@color/on_background"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonDelete"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="64dp"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginStart="6dp"
+                            android:text="删除"
+                            android:textSize="17sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#E53935"
+                            app:strokeColor="#E53935"
+                            app:strokeWidth="2dp"
+                            app:icon="@drawable/ic_delete"
+                            app:iconTint="#E53935"
+                            app:iconGravity="textStart"
+                            app:iconPadding="8dp"
+                            android:backgroundTint="@android:color/white"
+                            app:cornerRadius="20dp"
+                            app:rippleColor="#20E53935"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="提醒时间"
-                                android:textSize="14sp"
-                                android:textColor="#757575" />
 
-                            <TextView
-                                android:id="@+id/textViewReminderTime"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="2023年6月15日 14:30"
-                                android:textSize="16sp"
-                                android:textColor="@color/on_background"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <Button
-                android:id="@+id/buttonComplete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标记为已完成"
-                android:layout_marginBottom="8dp"
-                android:paddingVertical="12dp"
-                app:cornerRadius="12dp" />
-
-            <Button
-                android:id="@+id/buttonEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="编辑任务"
-                android:paddingVertical="12dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                app:cornerRadius="12dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

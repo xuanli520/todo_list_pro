@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <layer-list>
+            <!-- 内阴影 -->
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <gradient
+                        android:startColor="#FFFFFF"
+                        android:endColor="#F8F9FF"
+                        android:angle="135" />
+                    <stroke
+                        android:width="0.5dp"
+                        android:color="#E0E0E0" />
+                </shape>
+            </item>
+            <!-- 高光效果 -->
+            <item android:top="1dp" android:left="1dp" android:right="1dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <gradient
+                        android:startColor="#FFFFFF"
+                        android:endColor="@android:color/transparent"
+                        android:angle="90"
+                        android:centerY="0.2" />
+                </shape>
+            </item>
+            <!-- 微妙的阴影效果 -->
+            <item android:bottom="1.5dp" android:top="0.5dp" android:left="0.5dp" android:right="0.5dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <solid android:color="#FAFAFA" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="#10000000" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</selector>
