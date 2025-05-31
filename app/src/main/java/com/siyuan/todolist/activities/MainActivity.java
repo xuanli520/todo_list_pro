@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
 import androidx.appcompat.widget.SearchView;
-
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.siyuan.todolist.adapters.TaskViewPagerAdapter;
@@ -27,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_TASK_REQUEST = 1;
     public static final int EDIT_TASK_REQUEST = 2;
+    private static final String TAG = "MainActivity";
 
     private TaskViewModel taskViewModel;
     private ViewPager2 viewPager;
@@ -44,17 +44,20 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
 
-        // 初始化ViewModel
+        // 初始化ViewModel - 使用单例模式确保只有一个实例
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
         // 初始化视图
-        viewPager = findViewById(R.id.viewPager);
-        tabLayout = findViewById(R.id.tabLayout);
-        fabAddTask = findViewById(R.id.fabAddTask);
+        viewPager = findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
+        fabAddTask = findViewById(R.id.fab_add_task);
 
         // 设置ViewPager适配器
         TaskViewPagerAdapter pagerAdapter = new TaskViewPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
+
+        // 防止ViewPager2预加载过多页面导致重复观察
+        viewPager.setOffscreenPageLimit(1);
 
         // 连接TabLayout和ViewPager
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -71,11 +74,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attach();
 
-        // 添加任务按钮点击事件
-        fabAddTask.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, TaskEditActivity.class);
-            startActivityForResult(intent, ADD_TASK_REQUEST);
-        });
+        // 添加任务按钮点击事件，增加空值检查
+        if (fabAddTask != null) {
+            fabAddTask.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, TaskEditActivity.class);
+                startActivityForResult(intent, ADD_TASK_REQUEST);
+            });
+        } else {
+            // 如果FAB不存在，在日志中记录错误或显示提示
+            Snackbar.make(viewPager, "添加任务按钮未找到", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -154,29 +162,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ADD_TASK_REQUEST && data != null) {
-                Task task = (Task) data.getSerializableExtra("task");
-                if (task != null) {
-                    taskViewModel.insert(task);
-                    Snackbar.make(viewPager, "任务已添加", Snackbar.LENGTH_SHORT).show();
-                }
-            } else if (requestCode == EDIT_TASK_REQUEST && data != null) {
-                Task task = (Task) data.getSerializableExtra("task");
-                int id = data.getIntExtra("task_id", -1);
+        if (resultCode == RESULT_OK && data != null) {
+            Task task = (Task) data.getSerializableExtra("task");
+            if (task == null) {
+                Log.e(TAG, "任务数据为空");
+                return;
+            }
 
+            if (requestCode == ADD_TASK_REQUEST) {
+                // 添加日志确认任务仅插入一次
+                Log.d(TAG, "添加新任务: " + task.getTitle());
+
+                Snackbar.make(viewPager, "任务已添加", Snackbar.LENGTH_SHORT).show();
+            } else if (requestCode == EDIT_TASK_REQUEST) {
+                int id = data.getIntExtra("task_id", -1);
                 if (id == -1) {
                     Snackbar.make(viewPager, "任务无法更新", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
 
                 task.setId(id);
+                Log.d(TAG, "更新任务: " + task.getTitle() + ", ID: " + id);
                 taskViewModel.update(task);
                 Snackbar.make(viewPager, "任务已更新", Snackbar.LENGTH_SHORT).show();
             }
         }
     }
-
-    // ViewPager的Fragment类在这里实现
-    // 或者单独创建Fragment类文件
 }

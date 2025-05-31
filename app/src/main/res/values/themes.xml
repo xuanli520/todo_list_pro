@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 基础应用主题 -->
-    <style name="Theme.Todo_list" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.Todo_list" parent="Theme.Material3.Light.NoActionBar">
         <!-- 主要品牌色 -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
@@ -46,6 +46,11 @@
         <item name="tabInlineLabel">true</item>
         <item name="tabMinWidth">0dp</item>
         <item name="tabIconTint">@color/tab_icon_color_selector</item>
+    </style>
+
+    <style name="Theme.TodoList" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
 

@@ -9,13 +9,42 @@ import com.siyuan.todolist.models.Task;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class TaskRepository {
     private TaskDao taskDao;
     private LiveData<List<Task>> allTasks;
     private LiveData<List<Task>> activeTasks;
     private LiveData<List<Task>> completedTasks;
-    
+
+    // 添加获取带提醒的任务的方法
+    public LiveData<List<Task>> getTasksWithReminders() {
+        return taskDao.getTasksWithReminders();
+    }
+
+    // 添加同步方法获取带提醒的任务（用于非LifecycleOwner环境）
+    public List<Task> getTasksWithRemindersSync() {
+        try {
+            return new GetTasksWithRemindersSyncTask(taskDao).execute().get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static class GetTasksWithRemindersSyncTask extends AsyncTask<Void, Void, List<Task>> {
+        private TaskDao taskDao;
+
+        private GetTasksWithRemindersSyncTask(TaskDao taskDao) {
+            this.taskDao = taskDao;
+        }
+
+        @Override
+        protected List<Task> doInBackground(Void... voids) {
+            return taskDao.getTasksWithRemindersSync();
+        }
+    }
+
     public TaskRepository(Application application) {
         TaskDatabase database = TaskDatabase.getInstance(application);
         taskDao = database.taskDao();

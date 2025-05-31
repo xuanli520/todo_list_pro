@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">todo_list</string>
+    <!-- 任务编辑页面使用的字符串 -->
+    <string name="task_title">任务标题</string>
+    <string name="task_description">任务描述</string>
+    <string name="select_due_date">选择截止日期</string>
+    <string name="save_task">保存任务</string>
+
+    <string name="select_reminder_time">选择提醒时间</string>
+
 </resources>

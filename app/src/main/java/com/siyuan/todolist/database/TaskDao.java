@@ -48,4 +48,10 @@ public interface TaskDao {
     
     @Query("SELECT * FROM task_table WHERE title LIKE '%' || :searchQuery || '%' OR description LIKE '%' || :searchQuery || '%'")
     LiveData<List<Task>> searchTasks(String searchQuery);
+
+    @Query("SELECT * FROM task_table WHERE reminderTime IS NOT NULL AND completed = 0 ORDER BY dueDate")
+    LiveData<List<Task>> getTasksWithReminders();
+
+    @Query("SELECT * FROM task_table WHERE reminderTime IS NOT NULL AND completed = 0 ORDER BY dueDate")
+    List<Task> getTasksWithRemindersSync();
 }

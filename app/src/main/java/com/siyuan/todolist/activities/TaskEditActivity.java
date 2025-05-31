@@ -4,23 +4,25 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.siyuan.todolist.R;
 import com.siyuan.todolist.models.Task;
 import com.siyuan.todolist.utils.DateTimeUtils;
-import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import com.siyuan.todolist.utils.ReminderManager;
+import com.siyuan.todolist.viewmodels.TaskViewModel;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -29,237 +31,246 @@ import java.util.Date;
 
 public class TaskEditActivity extends AppCompatActivity {
 
-    private TextInputEditText editTextTitle, editTextDescription;
-    private TextView textViewDate, textViewTime;
-    private MaterialCardView datePickerCard, timePickerCard;
-    private RadioButton radioPriorityLow, radioPriorityMedium, radioPriorityHigh;
-    private ChipGroup categoryChipGroup;
-    private SwitchMaterial switchReminder;
-    private LinearLayout reminderLayout;
-    private Button buttonSave;
-    
-    private Date selectedDueDate = null;
-    private Date selectedReminderTime = null;
-    private int selectedPriority = 2; // 默认中优先级
-    private String selectedCategory = "";
-    
-    private boolean isEditMode = false;
+    private TextInputEditText editTextTitle;
+    private TextInputEditText editTextDescription;
+    private Button dueDateButton;
+    private Button reminderTimeButton;
+    private SwitchMaterial reminderSwitch;
+    private Spinner prioritySpinner;
+    private Spinner categorySpinner;
+    private MaterialButton saveButton;
+
+    private TaskViewModel taskViewModel;
+    private Task currentTask;
     private int taskId = -1;
+
+    private Date dueDate;
+    private Date reminderTime;
+    private Calendar reminderCalendar = Calendar.getInstance();
+    private boolean isReminderEnabled = false;
+
+    private String[] priorityLabels;
+    private int[] priorityValues = {1, 2, 3};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_edit);
-        
-        // 初始化视图
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        editTextTitle = findViewById(R.id.editTextTitle);
-        editTextDescription = findViewById(R.id.editTextDescription);
-        textViewDate = findViewById(R.id.textViewDate);
-        textViewTime = findViewById(R.id.textViewTime);
-        datePickerCard = findViewById(R.id.datePickerCard);
-        timePickerCard = findViewById(R.id.timePickerCard);
-        radioPriorityLow = findViewById(R.id.radioPriorityLow);
-        radioPriorityMedium = findViewById(R.id.radioPriorityMedium);
-        radioPriorityHigh = findViewById(R.id.radioPriorityHigh);
-        categoryChipGroup = findViewById(R.id.categoryChipGroup);
-        switchReminder = findViewById(R.id.switchReminder);
-        reminderLayout = findViewById(R.id.reminderLayout);
-        buttonSave = findViewById(R.id.buttonSave);
-        
-        // 检查是编辑模式还是添加模式
+
+        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+
+        editTextTitle = findViewById(R.id.titleEditText);
+        editTextDescription = findViewById(R.id.descriptionEditText);
+        dueDateButton = findViewById(R.id.dueDateButton);
+        reminderTimeButton = findViewById(R.id.reminderTimeButton);
+        reminderSwitch = findViewById(R.id.reminderSwitch);
+        prioritySpinner = findViewById(R.id.prioritySpinner);
+        categorySpinner = findViewById(R.id.categorySpinner);
+        saveButton = findViewById(R.id.saveButton);
+
+        priorityLabels = getResources().getStringArray(R.array.priority_array);
+
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(this,
+                R.array.category_array, android.R.layout.simple_spinner_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(categoryAdapter);
+
+        ArrayAdapter<CharSequence> priorityAdapter = ArrayAdapter.createFromResource(this,
+                R.array.priority_array, android.R.layout.simple_spinner_item);
+        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prioritySpinner.setAdapter(priorityAdapter);
+
         Intent intent = getIntent();
-        if (intent.hasExtra("task")) {
-            isEditMode = true;
-            Task task = (Task) intent.getSerializableExtra("task");
-            taskId = task.getId();
-            
-            // 填充表单数据
-            editTextTitle.setText(task.getTitle());
-            editTextDescription.setText(task.getDescription());
-            
-            selectedDueDate = task.getDueDate();
-            if (selectedDueDate != null) {
-                textViewDate.setText(DateTimeUtils.formatDate(selectedDueDate));
+        if (intent != null && intent.hasExtra("task")) {
+            currentTask = (Task) intent.getSerializableExtra("task");
+            if (currentTask != null) {
+                taskId = currentTask.getId();
+                populateTaskData();
             }
-            
-            selectedReminderTime = task.getReminderTime();
-            if (selectedReminderTime != null) {
-                switchReminder.setChecked(true);
-                reminderLayout.setVisibility(View.VISIBLE);
-                textViewTime.setText(DateTimeUtils.formatTime(selectedReminderTime));
-            }
-            
-            // 设置优先级
-            selectedPriority = task.getPriority();
-            switch (selectedPriority) {
-                case 1:
-                    radioPriorityLow.setChecked(true);
-                    break;
-                case 3:
-                    radioPriorityHigh.setChecked(true);
-                    break;
-                default:
-                    radioPriorityMedium.setChecked(true);
-                    break;
-            }
-            
-            // 设置类别
-            selectedCategory = task.getCategory();
-            if (selectedCategory != null && !selectedCategory.isEmpty()) {
-                for (int i = 0; i < categoryChipGroup.getChildCount(); i++) {
-                    View child = categoryChipGroup.getChildAt(i);
-                    if (child instanceof Chip) {
-                        Chip chip = (Chip) child;
-                        if (chip.getText().toString().equals(selectedCategory)) {
-                            chip.setChecked(true);
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // 更新UI标题
-            getSupportActionBar().setTitle("编辑任务");
-            buttonSave.setText("更新任务");
         } else {
-            getSupportActionBar().setTitle("添加任务");
-            buttonSave.setText("添加任务");
+            dueDateButton.setText(R.string.select_due_date);
+            reminderTimeButton.setText(R.string.select_reminder_time);
+            updateReminderButtonState();
         }
-        
-        // 设置日期选择器
-        datePickerCard.setOnClickListener(v -> {
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-            
-            if (selectedDueDate != null) {
-                c.setTime(selectedDueDate);
-                year = c.get(Calendar.YEAR);
-                month = c.get(Calendar.MONTH);
-                day = c.get(Calendar.DAY_OF_MONTH);
-            }
-            
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    TaskEditActivity.this,
-                    (view, selectedYear, selectedMonth, selectedDay) -> {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(selectedYear, selectedMonth, selectedDay);
-                        selectedDueDate = calendar.getTime();
-                        textViewDate.setText(DateTimeUtils.formatDate(selectedDueDate));
-                    },
-                    year, month, day);
-            datePickerDialog.show();
+
+        dueDateButton.setOnClickListener(v -> showDatePickerDialog());
+        reminderTimeButton.setOnClickListener(v -> showTimePickerDialog());
+
+        reminderSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isReminderEnabled = isChecked;
+            updateReminderButtonState();
         });
-        
-        // 设置时间选择器
-        timePickerCard.setOnClickListener(v -> {
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-            
-            if (selectedReminderTime != null) {
-                c.setTime(selectedReminderTime);
-                hour = c.get(Calendar.HOUR_OF_DAY);
-                minute = c.get(Calendar.MINUTE);
-            }
-            
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    TaskEditActivity.this,
-                    (view, selectedHour, selectedMinute) -> {
-                        Calendar calendar = Calendar.getInstance();
-                        if (selectedDueDate != null) {
-                            calendar.setTime(selectedDueDate);
-                        }
-                        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        calendar.set(Calendar.MINUTE, selectedMinute);
-                        selectedReminderTime = calendar.getTime();
-                        textViewTime.setText(DateTimeUtils.formatTime(selectedReminderTime));
-                    },
-                    hour, minute, true);
-            timePickerDialog.show();
-        });
-        
-        // 优先级选择
-        RadioGroup priorityRadioGroup = findViewById(R.id.priorityRadioGroup);
-        priorityRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.radioPriorityLow) {
-                selectedPriority = 1;
-            } else if (checkedId == R.id.radioPriorityHigh) {
-                selectedPriority = 3;
-            } else {
-                selectedPriority = 2;
-            }
-        });
-        
-        // 类别选择
-        categoryChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId != -1) {
-                Chip chip = findViewById(checkedId);
-                if (chip != null && checkedId != R.id.chipAddCategory) {
-                    selectedCategory = chip.getText().toString();
-                }
-            } else {
-                selectedCategory = "";
-            }
-        });
-        
-        // 添加新类别
-        Chip chipAddCategory = findViewById(R.id.chipAddCategory);
-        chipAddCategory.setOnClickListener(v -> {
-            // 这里可以弹出对话框让用户输入新的类别
-            // 简化起见，这里省略了该功能的实现
-        });
-        
-        // 提醒开关
-        switchReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            reminderLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            if (!isChecked) {
-                selectedReminderTime = null;
-            }
-        });
-        
-        // 保存按钮
-        buttonSave.setOnClickListener(v -> saveTask());
+
+        saveButton.setOnClickListener(v -> saveTask());
     }
-    
+
+    private void updateReminderButtonState() {
+        reminderTimeButton.setEnabled(isReminderEnabled);
+        reminderTimeButton.setAlpha(isReminderEnabled ? 1.0f : 0.5f);
+    }
+
+    private void populateTaskData() {
+        if (currentTask == null) return;
+
+        editTextTitle.setText(currentTask.getTitle());
+        editTextDescription.setText(currentTask.getDescription());
+
+        if (currentTask.getDueDate() != null) {
+            dueDate = currentTask.getDueDate();
+            dueDateButton.setText(DateTimeUtils.formatDate(dueDate));
+        } else {
+            dueDateButton.setText(R.string.select_due_date);
+        }
+
+        if (currentTask.getReminderTime() != null) {
+            reminderTime = currentTask.getReminderTime();
+            reminderCalendar.setTime(reminderTime);
+            reminderTimeButton.setText(DateTimeUtils.formatTime(reminderTime));
+            reminderSwitch.setChecked(true);
+            isReminderEnabled = true;
+        } else {
+            reminderTimeButton.setText(R.string.select_reminder_time);
+            reminderSwitch.setChecked(false);
+            isReminderEnabled = false;
+        }
+        updateReminderButtonState();
+
+        int priority = currentTask.getPriority();
+        String priorityLabel = "";
+        switch (priority) {
+            case 1:
+                priorityLabel = priorityLabels[0];
+                break;
+            case 3:
+                priorityLabel = priorityLabels[2];
+                break;
+            default:
+                priorityLabel = priorityLabels[1];
+                break;
+        }
+
+        for (int i = 0; i < prioritySpinner.getCount(); i++) {
+            if (prioritySpinner.getItemAtPosition(i).toString().equals(priorityLabel)) {
+                prioritySpinner.setSelection(i);
+                break;
+            }
+        }
+
+        String category = currentTask.getCategory();
+        if (category != null && !category.isEmpty()) {
+            for (int i = 0; i < categorySpinner.getCount(); i++) {
+                if (categorySpinner.getItemAtPosition(i).toString().equals(category)) {
+                    categorySpinner.setSelection(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        if (dueDate != null) {
+            calendar.setTime(dueDate);
+        }
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, year, month, dayOfMonth) -> {
+                    calendar.set(year, month, dayOfMonth);
+                    dueDate = calendar.getTime();
+                    dueDateButton.setText(DateTimeUtils.formatDate(dueDate));
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    private void showTimePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        if (reminderTime != null) {
+            calendar.setTime(reminderTime);
+        }
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                (view, hourOfDay, minute) -> {
+                    reminderCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    reminderCalendar.set(Calendar.MINUTE, minute);
+                    reminderCalendar.set(Calendar.SECOND, 0);
+
+                    reminderTime = reminderCalendar.getTime();
+                    reminderTimeButton.setText(DateTimeUtils.formatTime(reminderTime));
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        );
+        timePickerDialog.show();
+    }
+
     private void saveTask() {
         String title = editTextTitle.getText().toString().trim();
         String description = editTextDescription.getText().toString().trim();
-        
-        // 验证表单
+
         if (title.isEmpty()) {
-            editTextTitle.setError("请输入任务标题");
+            Snackbar.make(saveButton, "请输入任务标题", Snackbar.LENGTH_SHORT).show();
             return;
         }
-        
-        // 创建任务对象
-        Task task = new Task(title, description, selectedDueDate, 
-                switchReminder.isChecked() ? selectedReminderTime : null, 
-                selectedPriority, selectedCategory);
-        
-        // 返回结果
-        Intent data = new Intent();
-        data.putExtra("task", task);
-        
-        if (isEditMode) {
-            data.putExtra("task_id", taskId);
+
+        if (dueDate == null) {
+            Snackbar.make(saveButton, "请选择截止日期", Snackbar.LENGTH_SHORT).show();
+            return;
         }
-        
-        setResult(RESULT_OK, data);
+
+        int selectedPriorityIndex = prioritySpinner.getSelectedItemPosition();
+        int priority = priorityValues[selectedPriorityIndex];
+        String category = categorySpinner.getSelectedItem().toString();
+
+        // 确定是否设置提醒时间
+        Date finalReminderTime = null;
+        if (isReminderEnabled && reminderTime != null) {
+            finalReminderTime = reminderTime;
+        }
+
+        Task task = new Task(title, description, dueDate, finalReminderTime, priority, category);
+
+        if (taskId == -1) {
+            task.setCreatedDate(new Date());
+            taskViewModel.insert(task);
+            Snackbar.make(saveButton, "任务已添加", Snackbar.LENGTH_SHORT).show();
+        } else {
+            task.setId(taskId);
+            task.setCreatedDate(currentTask.getCreatedDate());
+            task.setCompleted(currentTask.isCompleted());
+
+            // 如果存在旧的提醒，取消它
+            if (currentTask.getReminderTime() != null) {
+                ReminderManager.cancelReminder(this, taskId);
+            }
+
+            taskViewModel.update(task);
+            Snackbar.make(saveButton, "任务已更新", Snackbar.LENGTH_SHORT).show();
+        }
+
+        // 如果启用了提醒，设置新的提醒
+        if (isReminderEnabled && finalReminderTime != null) {
+            if (taskId == -1) {
+                // 对于新任务，需要在数据库中查询新生成的ID
+                // 这里假设ReminderManager可以处理这种情况
+                ReminderManager.scheduleReminder(this, task);
+            } else {
+                ReminderManager.scheduleReminder(this, task);
+            }
+        }
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("task", task);
+        if (taskId != -1) {
+            resultIntent.putExtra("task_id", taskId);
+        }
+        setResult(RESULT_OK, resultIntent);
         finish();
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

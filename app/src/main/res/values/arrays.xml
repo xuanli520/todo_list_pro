@@ -1,0 +1,16 @@
+<resources>
+    <!-- 任务类别选项 -->
+    <string-array name="category_array">
+        <item>个人</item>
+        <item>工作</item>
+        <item>学习</item>
+        <item>购物</item>
+    </string-array>
+
+    <!-- 任务优先级选项 -->
+    <string-array name="priority_array">
+        <item>低优先级</item>
+        <item>中优先级</item>
+        <item>高优先级</item>
+    </string-array>
+</resources>

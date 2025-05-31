@@ -47,4 +47,16 @@
     <color name="task_completed">#4CAF50</color>  <!-- 使用绿色表示已完成 -->
     <color name="error">#F44336</color>  <!-- 使用红色表示错误 -->
 
+    <!-- 新添加的颜色 -->
+    <color name="primary_main">#5E35B1</color>   <!-- 蓝紫色主色 -->
+    <color name="accent_main">#7E57C2</color>    <!-- 蓝紫色强调色 -->
+
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorAccent">#8BC34A</color>
+    <color name="textColorPrimary">#333333</color>
+    <color name="textColorSecondary">#757575</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorSurface">#F8F8F8</color>
+    <color name="colorError">#E53935</color>
 </resources>
